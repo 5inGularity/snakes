@@ -21,6 +21,7 @@ export default function ClassicSnake() {
   const [isPaused, setIsPaused] = useState(false)
   const directionRef = useRef<Direction>(INITIAL_DIRECTION)
   const confettiShownRef = useRef(false)
+  const directionQueueRef = useRef<Direction[]>([])
 
   const {
     score,
@@ -52,6 +53,7 @@ export default function ClassicSnake() {
     setIsPaused(false)
     resetScore()
     confettiShownRef.current = false
+    directionQueueRef.current = []
   }, [resetScore])
 
   useEffect(() => {
@@ -69,33 +71,38 @@ export default function ClassicSnake() {
 
       if (gameOver) return
 
-      const currentDir = directionRef.current
+      // Get the last direction in queue or current direction
+      const queue = directionQueueRef.current
+      const lastDir = queue.length > 0 ? queue[queue.length - 1] : directionRef.current
+
+      let newDirection: Direction | null = null
 
       switch (e.key) {
         case 'ArrowUp':
-          if (currentDir.y === 0) {
-            setDirection({ x: 0, y: -1 })
-            directionRef.current = { x: 0, y: -1 }
+          if (lastDir.y === 0) {
+            newDirection = { x: 0, y: -1 }
           }
           break
         case 'ArrowDown':
-          if (currentDir.y === 0) {
-            setDirection({ x: 0, y: 1 })
-            directionRef.current = { x: 0, y: 1 }
+          if (lastDir.y === 0) {
+            newDirection = { x: 0, y: 1 }
           }
           break
         case 'ArrowLeft':
-          if (currentDir.x === 0) {
-            setDirection({ x: -1, y: 0 })
-            directionRef.current = { x: -1, y: 0 }
+          if (lastDir.x === 0) {
+            newDirection = { x: -1, y: 0 }
           }
           break
         case 'ArrowRight':
-          if (currentDir.x === 0) {
-            setDirection({ x: 1, y: 0 })
-            directionRef.current = { x: 1, y: 0 }
+          if (lastDir.x === 0) {
+            newDirection = { x: 1, y: 0 }
           }
           break
+      }
+
+      // Add to queue if valid and queue isn't too long (max 2 buffered inputs)
+      if (newDirection && queue.length < 2) {
+        queue.push(newDirection)
       }
     }
 
@@ -107,6 +114,13 @@ export default function ClassicSnake() {
     if (gameOver || isPaused) return
 
     const gameLoop = setInterval(() => {
+      // Process next direction from queue
+      if (directionQueueRef.current.length > 0) {
+        const nextDir = directionQueueRef.current.shift()!
+        directionRef.current = nextDir
+        setDirection(nextDir)
+      }
+
       setSnake(currentSnake => {
         const head = currentSnake[0]
         const newHead = {
@@ -198,63 +212,116 @@ export default function ClassicSnake() {
         const centerY = segment.y * CELL_SIZE + CELL_SIZE / 2
 
         // Draw eyes
-        ctx.fillStyle = '#000000'
         const eyeOffset = 4
 
-        if (directionRef.current.x !== 0) {
-          // Moving horizontally - eyes on top and bottom
-          ctx.beginPath()
-          ctx.arc(centerX, centerY - eyeOffset, 2, 0, Math.PI * 2)
-          ctx.fill()
-          ctx.beginPath()
-          ctx.arc(centerX, centerY + eyeOffset, 2, 0, Math.PI * 2)
-          ctx.fill()
+        if (gameOver) {
+          // Draw X marks for dead eyes
+          ctx.strokeStyle = '#000000'
+          ctx.lineWidth = 2
+          const crossSize = 3
+
+          if (directionRef.current.x !== 0) {
+            // Moving horizontally - eyes on top and bottom
+            // Top eye X
+            ctx.beginPath()
+            ctx.moveTo(centerX - crossSize, centerY - eyeOffset - crossSize)
+            ctx.lineTo(centerX + crossSize, centerY - eyeOffset + crossSize)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(centerX + crossSize, centerY - eyeOffset - crossSize)
+            ctx.lineTo(centerX - crossSize, centerY - eyeOffset + crossSize)
+            ctx.stroke()
+            // Bottom eye X
+            ctx.beginPath()
+            ctx.moveTo(centerX - crossSize, centerY + eyeOffset - crossSize)
+            ctx.lineTo(centerX + crossSize, centerY + eyeOffset + crossSize)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(centerX + crossSize, centerY + eyeOffset - crossSize)
+            ctx.lineTo(centerX - crossSize, centerY + eyeOffset + crossSize)
+            ctx.stroke()
+          } else {
+            // Moving vertically - eyes on left and right
+            // Left eye X
+            ctx.beginPath()
+            ctx.moveTo(centerX - eyeOffset - crossSize, centerY - crossSize)
+            ctx.lineTo(centerX - eyeOffset + crossSize, centerY + crossSize)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(centerX - eyeOffset + crossSize, centerY - crossSize)
+            ctx.lineTo(centerX - eyeOffset - crossSize, centerY + crossSize)
+            ctx.stroke()
+            // Right eye X
+            ctx.beginPath()
+            ctx.moveTo(centerX + eyeOffset - crossSize, centerY - crossSize)
+            ctx.lineTo(centerX + eyeOffset + crossSize, centerY + crossSize)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(centerX + eyeOffset + crossSize, centerY - crossSize)
+            ctx.lineTo(centerX + eyeOffset - crossSize, centerY + crossSize)
+            ctx.stroke()
+          }
         } else {
-          // Moving vertically - eyes on left and right
-          ctx.beginPath()
-          ctx.arc(centerX - eyeOffset, centerY, 2, 0, Math.PI * 2)
-          ctx.fill()
-          ctx.beginPath()
-          ctx.arc(centerX + eyeOffset, centerY, 2, 0, Math.PI * 2)
-          ctx.fill()
+          // Draw normal dot eyes
+          ctx.fillStyle = '#000000'
+
+          if (directionRef.current.x !== 0) {
+            // Moving horizontally - eyes on top and bottom
+            ctx.beginPath()
+            ctx.arc(centerX, centerY - eyeOffset, 2, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.beginPath()
+            ctx.arc(centerX, centerY + eyeOffset, 2, 0, Math.PI * 2)
+            ctx.fill()
+          } else {
+            // Moving vertically - eyes on left and right
+            ctx.beginPath()
+            ctx.arc(centerX - eyeOffset, centerY, 2, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.beginPath()
+            ctx.arc(centerX + eyeOffset, centerY, 2, 0, Math.PI * 2)
+            ctx.fill()
+          }
         }
 
-        // Draw tongue
-        ctx.fillStyle = '#ef4444'
-        ctx.strokeStyle = '#ef4444'
-        ctx.lineWidth = 2
+        // Draw tongue (only when alive)
+        if (!gameOver) {
+          ctx.fillStyle = '#ef4444'
+          ctx.strokeStyle = '#ef4444'
+          ctx.lineWidth = 2
 
-        const tongueLength = 6
-        const tongueStartX = centerX + directionRef.current.x * (CELL_SIZE / 2 - 2)
-        const tongueStartY = centerY + directionRef.current.y * (CELL_SIZE / 2 - 2)
-        const tongueEndX = tongueStartX + directionRef.current.x * tongueLength
-        const tongueEndY = tongueStartY + directionRef.current.y * tongueLength
+          const tongueLength = 6
+          const tongueStartX = centerX + directionRef.current.x * (CELL_SIZE / 2 - 2)
+          const tongueStartY = centerY + directionRef.current.y * (CELL_SIZE / 2 - 2)
+          const tongueEndX = tongueStartX + directionRef.current.x * tongueLength
+          const tongueEndY = tongueStartY + directionRef.current.y * tongueLength
 
-        ctx.beginPath()
-        ctx.moveTo(tongueStartX, tongueStartY)
-        ctx.lineTo(tongueEndX, tongueEndY)
-        ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(tongueStartX, tongueStartY)
+          ctx.lineTo(tongueEndX, tongueEndY)
+          ctx.stroke()
 
-        // Forked tongue tip
-        const forkLength = 3
-        if (directionRef.current.x !== 0) {
-          ctx.beginPath()
-          ctx.moveTo(tongueEndX, tongueEndY)
-          ctx.lineTo(tongueEndX, tongueEndY - forkLength)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.moveTo(tongueEndX, tongueEndY)
-          ctx.lineTo(tongueEndX, tongueEndY + forkLength)
-          ctx.stroke()
-        } else {
-          ctx.beginPath()
-          ctx.moveTo(tongueEndX, tongueEndY)
-          ctx.lineTo(tongueEndX - forkLength, tongueEndY)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.moveTo(tongueEndX, tongueEndY)
-          ctx.lineTo(tongueEndX + forkLength, tongueEndY)
-          ctx.stroke()
+          // Forked tongue tip
+          const forkLength = 3
+          if (directionRef.current.x !== 0) {
+            ctx.beginPath()
+            ctx.moveTo(tongueEndX, tongueEndY)
+            ctx.lineTo(tongueEndX, tongueEndY - forkLength)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(tongueEndX, tongueEndY)
+            ctx.lineTo(tongueEndX, tongueEndY + forkLength)
+            ctx.stroke()
+          } else {
+            ctx.beginPath()
+            ctx.moveTo(tongueEndX, tongueEndY)
+            ctx.lineTo(tongueEndX - forkLength, tongueEndY)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(tongueEndX, tongueEndY)
+            ctx.lineTo(tongueEndX + forkLength, tongueEndY)
+            ctx.stroke()
+          }
         }
       } else if (isTail) {
         // Tail - pointy tip
@@ -306,7 +373,7 @@ export default function ClassicSnake() {
       CELL_SIZE - 2,
       CELL_SIZE - 2
     )
-  }, [snake, food])
+  }, [snake, food, gameOver])
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8">
