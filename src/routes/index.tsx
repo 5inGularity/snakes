@@ -15,6 +15,12 @@ function HomePage() {
       description: 'The traditional snake game',
       available: true,
     },
+    {
+      id: 'adder',
+      name: 'Adder Snake',
+      description: 'Eat eggs to grow or shrink - manage your length!',
+      available: true,
+    },
     // More games will be added here
   ]
 
