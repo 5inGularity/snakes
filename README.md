@@ -2,6 +2,8 @@
 
 A collection of 10+ snake game variants hosted at snakes.lalitmishra.in
 
+📖 **[Game Rules & Descriptions](GAMES.md)** - Learn how to play each variant
+
 ## Tech Stack
 
 ### Core
@@ -50,6 +52,7 @@ A collection of 10+ snake game variants hosted at snakes.lalitmishra.in
 ## Game Variants
 
 - [x] Classic Snake
+- [x] Adder Snake
 - [ ] More variants to be added...
 
 ## Development Learnings
