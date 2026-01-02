@@ -339,17 +339,6 @@ export default function AdderSnake() {
       const isNewSegment = animationRef.current.type === 'grow' && index < newSegmentsCountRef.current
       const isRemovedArea = animationRef.current.type === 'shrink' && index >= snake.length - Math.min(3, newSegmentsCountRef.current)
 
-      // Skip drawing if wrapping around (segment is disconnected from previous)
-      if (index > 0) {
-        const prevSegment = snake[index - 1]
-        const dx = Math.abs(segment.x - prevSegment.x)
-        const dy = Math.abs(segment.y - prevSegment.y)
-        // If distance is more than 1, segments are wrapping around
-        if (dx > 1 || dy > 1) {
-          return
-        }
-      }
-
       if (isHead) {
         // Head - bright green with rounded corners, with animation glow
         let headColor = '#10b981'
@@ -494,25 +483,38 @@ export default function AdderSnake() {
         // Determine tail direction (opposite of next segment)
         if (index > 0) {
           const nextSegment = snake[index - 1]
-          const tailDirX = segment.x - nextSegment.x
-          const tailDirY = segment.y - nextSegment.y
+          const dx = Math.abs(segment.x - nextSegment.x)
+          const dy = Math.abs(segment.y - nextSegment.y)
 
-          ctx.beginPath()
-          if (tailDirX !== 0) {
-            // Horizontal tail
-            const tipX = centerX + tailDirX * (CELL_SIZE / 2)
-            ctx.moveTo(tipX, centerY)
-            ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY - (CELL_SIZE / 2 - 2))
-            ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY + (CELL_SIZE / 2 - 2))
+          // Check if tail is wrapping around - if so, just draw a square
+          if (dx > 1 || dy > 1) {
+            ctx.fillRect(
+              segment.x * CELL_SIZE + 2,
+              segment.y * CELL_SIZE + 2,
+              CELL_SIZE - 4,
+              CELL_SIZE - 4
+            )
           } else {
-            // Vertical tail
-            const tipY = centerY + tailDirY * (CELL_SIZE / 2)
-            ctx.moveTo(centerX, tipY)
-            ctx.lineTo(centerX - (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
-            ctx.lineTo(centerX + (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
+            const tailDirX = segment.x - nextSegment.x
+            const tailDirY = segment.y - nextSegment.y
+
+            ctx.beginPath()
+            if (tailDirX !== 0) {
+              // Horizontal tail
+              const tipX = centerX + tailDirX * (CELL_SIZE / 2)
+              ctx.moveTo(tipX, centerY)
+              ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY - (CELL_SIZE / 2 - 2))
+              ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY + (CELL_SIZE / 2 - 2))
+            } else {
+              // Vertical tail
+              const tipY = centerY + tailDirY * (CELL_SIZE / 2)
+              ctx.moveTo(centerX, tipY)
+              ctx.lineTo(centerX - (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
+              ctx.lineTo(centerX + (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
+            }
+            ctx.closePath()
+            ctx.fill()
           }
-          ctx.closePath()
-          ctx.fill()
         }
       } else {
         // Body - medium green with animation effects

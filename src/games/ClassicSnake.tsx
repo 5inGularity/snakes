@@ -4,7 +4,7 @@ import { useHighScore } from '../hooks/useHighScore'
 import { triggerHighScoreCelebration, triggerGameOverCelebration } from '../utils/celebration'
 
 const GRID_SIZE = 20
-const CELL_SIZE = 20
+const CELL_SIZE = 30
 const INITIAL_SNAKE = [{ x: 10, y: 10 }, { x: 9, y: 10 }]
 const INITIAL_DIRECTION = { x: 1, y: 0 }
 const GAME_SPEED = 150
@@ -184,17 +184,6 @@ export default function ClassicSnake() {
       const isHead = index === 0
       const isTail = index === snake.length - 1
 
-      // Skip drawing if wrapping around (segment is disconnected from previous)
-      if (index > 0) {
-        const prevSegment = snake[index - 1]
-        const dx = Math.abs(segment.x - prevSegment.x)
-        const dy = Math.abs(segment.y - prevSegment.y)
-        // If distance is more than 1, segments are wrapping around
-        if (dx > 1 || dy > 1) {
-          return
-        }
-      }
-
       if (isHead) {
         // Head - bright green with rounded corners
         ctx.fillStyle = '#10b981'
@@ -333,25 +322,38 @@ export default function ClassicSnake() {
         // Determine tail direction (opposite of next segment)
         if (index > 0) {
           const nextSegment = snake[index - 1]
-          const tailDirX = segment.x - nextSegment.x
-          const tailDirY = segment.y - nextSegment.y
+          const dx = Math.abs(segment.x - nextSegment.x)
+          const dy = Math.abs(segment.y - nextSegment.y)
 
-          ctx.beginPath()
-          if (tailDirX !== 0) {
-            // Horizontal tail
-            const tipX = centerX + tailDirX * (CELL_SIZE / 2)
-            ctx.moveTo(tipX, centerY)
-            ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY - (CELL_SIZE / 2 - 2))
-            ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY + (CELL_SIZE / 2 - 2))
+          // Check if tail is wrapping around - if so, just draw a square
+          if (dx > 1 || dy > 1) {
+            ctx.fillRect(
+              segment.x * CELL_SIZE + 2,
+              segment.y * CELL_SIZE + 2,
+              CELL_SIZE - 4,
+              CELL_SIZE - 4
+            )
           } else {
-            // Vertical tail
-            const tipY = centerY + tailDirY * (CELL_SIZE / 2)
-            ctx.moveTo(centerX, tipY)
-            ctx.lineTo(centerX - (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
-            ctx.lineTo(centerX + (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
+            const tailDirX = segment.x - nextSegment.x
+            const tailDirY = segment.y - nextSegment.y
+
+            ctx.beginPath()
+            if (tailDirX !== 0) {
+              // Horizontal tail
+              const tipX = centerX + tailDirX * (CELL_SIZE / 2)
+              ctx.moveTo(tipX, centerY)
+              ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY - (CELL_SIZE / 2 - 2))
+              ctx.lineTo(centerX - tailDirX * (CELL_SIZE / 2 - 2), centerY + (CELL_SIZE / 2 - 2))
+            } else {
+              // Vertical tail
+              const tipY = centerY + tailDirY * (CELL_SIZE / 2)
+              ctx.moveTo(centerX, tipY)
+              ctx.lineTo(centerX - (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
+              ctx.lineTo(centerX + (CELL_SIZE / 2 - 2), centerY - tailDirY * (CELL_SIZE / 2 - 2))
+            }
+            ctx.closePath()
+            ctx.fill()
           }
-          ctx.closePath()
-          ctx.fill()
         }
       } else {
         // Body - medium green
@@ -365,14 +367,38 @@ export default function ClassicSnake() {
       }
     })
 
-    // Draw food
-    ctx.fillStyle = '#ef4444'
-    ctx.fillRect(
-      food.x * CELL_SIZE + 1,
-      food.y * CELL_SIZE + 1,
-      CELL_SIZE - 2,
-      CELL_SIZE - 2
+    // Draw food as white egg
+    const centerX = food.x * CELL_SIZE + CELL_SIZE / 2
+    const centerY = food.y * CELL_SIZE + CELL_SIZE / 2
+    const eggWidth = CELL_SIZE * 0.9
+    const eggHeight = CELL_SIZE * 1.1
+
+    // Draw egg shadow for depth
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
+    ctx.beginPath()
+    ctx.ellipse(centerX + 1, centerY + 2, eggWidth / 2, eggHeight / 2, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    // Egg background (white)
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.ellipse(centerX, centerY, eggWidth / 2, eggHeight / 2, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    // Add highlight for 3D effect
+    const gradient = ctx.createRadialGradient(
+      centerX - eggWidth / 6,
+      centerY - eggHeight / 6,
+      0,
+      centerX,
+      centerY,
+      eggHeight / 2
     )
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)')
+    gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.2)')
+    gradient.addColorStop(1, 'rgba(200, 200, 200, 0.3)')
+    ctx.fillStyle = gradient
+    ctx.fill()
   }, [snake, food, gameOver])
 
   return (
