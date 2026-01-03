@@ -60,13 +60,16 @@ function HomePage() {
       <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
         {/* Header - Full width for centering */}
         <div className={`text-center mb-20 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'}`}>
-          <h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold mb-8 tracking-wider" style={{fontFamily: "'Orbitron', sans-serif"}}>
+          <h1 className="sm:text-5xl md:text-6xl lg:text-8xl font-bold mb-8 tracking-wide sm:tracking-wider" style={{
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: 'clamp(1.75rem, 9vw, 3rem)'
+          }}>
             <span className="text-cyan-400" style={{
               textShadow: '0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF, 0 0 40px #00AAFF'
             }}>
               SNAKE
             </span>
-            <span className="text-white mx-4">//</span>
+            <span className="text-white mx-2 sm:mx-4">//</span>
             <span className="text-blue-400" style={{
               textShadow: '0 0 10px #0066FF, 0 0 20px #0066FF, 0 0 30px #0066FF'
             }}>
@@ -210,11 +213,6 @@ function HomePage() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Footer hint */}
-        <div className={`mt-20 text-center text-cyan-500/50 text-xs uppercase tracking-widest transition-all duration-1000 delay-700 max-w-7xl mx-auto ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          <p>[ REACT.SYS v19.2 // TOUCH_INTERFACE.ENABLED ]</p>
         </div>
       </div>
     </div>
