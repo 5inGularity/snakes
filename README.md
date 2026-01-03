@@ -1,8 +1,35 @@
-# Snake Game Variants
+# Snake//Arcade
 
-A collection of 10+ snake game variants hosted at snakes.lalitmishra.in
+A collection of snake game variants with a retro Tron-inspired aesthetic.
 
 📖 **[Game Rules & Descriptions](GAMES.md)** - Learn how to play each variant
+
+## Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Environment Variables
+
+For analytics (optional):
+
+```bash
+VITE_PUBLIC_POSTHOG_KEY=your_posthog_key
+VITE_PUBLIC_POSTHOG_HOST=your_posthog_host
+```
+
+Analytics are disabled if environment variables are not provided.
 
 ## Tech Stack
 
@@ -17,30 +44,77 @@ A collection of 10+ snake game variants hosted at snakes.lalitmishra.in
   - Type safety across all routes
 
 ### Styling
-- **Tailwind CSS** - Quick UI development for homepage grid, navigation, shared components
+- **Tailwind CSS** - Tron-inspired neon aesthetic with responsive design
+- **Custom Fonts** - Orbitron for retro-futuristic feel
 
-### State Management
-- **Zustand** - Lightweight, use only where needed in individual games
-  - Each variant can manage state independently
+### Rendering
+- **Canvas API** - High-performance 2D rendering for all games
+- Custom drawing logic for snake segments, eggs, and visual effects
 
-### Game-Specific Libraries
-- **Three.js** - For 3D variant
-- **Canvas API** - For canvas-based variants
-- Each variant loads its dependencies independently
-
-### Future Backend Integration
-- **TanStack Query** - For API calls (leaderboards/scores)
-- **Cloudflare Workers/D1** - Backend API and database
+### Analytics
+- **PostHog** - Privacy-focused game analytics
+  - Tracks game starts and completions
+  - No session recording or invasive tracking
+  - Optional (disabled without env vars)
 
 ### Developer Experience
 - ESLint + TypeScript ESLint
 - Prettier
 
+## Project Structure
+
+```
+src/
+├── components/          # Shared UI components
+│   ├── GameContainer.tsx
+│   ├── GameHeader.tsx
+│   ├── GameOverlay.tsx
+│   └── TouchControls.tsx
+├── games/              # Game implementations
+│   ├── ClassicSnake.tsx
+│   ├── AdderSnake.tsx
+│   └── TimeTrialSnake.tsx
+├── hooks/              # Custom React hooks
+│   └── useHighScore.ts
+├── lib/                # Utilities
+│   └── analytics.ts
+├── routes/             # TanStack Router routes
+│   ├── __root.tsx
+│   ├── index.tsx       # Home page
+│   ├── classic.tsx
+│   ├── adder.tsx
+│   └── time-trial.tsx
+└── utils/              # Helper functions
+    └── celebration.ts
+```
+
+## Features
+
+### UI/UX
+- 📱 **Responsive Design**: Works seamlessly on mobile and desktop
+- 🎮 **Touch Controls**: On-screen d-pad for mobile gameplay
+- ⌨️ **Keyboard Controls**: Arrow keys for movement, Space to pause
+- 🎨 **Tron Aesthetic**: Neon glow effects, scanlines, retro-futuristic design
+- 📏 **Fluid Typography**: Title scales with viewport on small screens
+
+### Gameplay
+- 🎯 **High Scores**: Persistent local storage per game variant
+- 🎉 **Visual Feedback**: Confetti celebrations on high scores
+- 🥚 **Realistic Eggs**: Gradient-filled, egg-shaped (not flat ellipses)
+- 🎮 **Smooth Controls**: Input queue prevents lost commands
+
+### Technical
+- 🌐 **Fast Loading**: Code splitting per game route
+- 📊 **Privacy-First Analytics**: Optional PostHog tracking (game starts/ends only)
+- ⚡ **Performance**: Canvas rendering at 60 FPS
+- 🔧 **Type Safety**: Full TypeScript coverage
+
 ## Deployment
 
 - **Platform**: Cloudflare Pages
-- **Domain**: snakes.lalitmishra.in
-- **CI/CD**: GitHub integration (auto-deploy on push)
+- **CI/CD**: Auto-deploy on push to main
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
 
 ## Architecture
 
@@ -51,9 +125,48 @@ A collection of 10+ snake game variants hosted at snakes.lalitmishra.in
 
 ## Game Variants
 
-- [x] Classic Snake
-- [x] Adder Snake
-- [ ] More variants to be added...
+### 🐍 Classic Snake
+Traditional snake game where you grow by eating eggs. Simple, timeless gameplay.
+- Eat white eggs to grow
+- Avoid walls and yourself
+- Beat your high score
+
+### ⚡ Adder Snake
+Strategic variant with positive and negative eggs that affect your length.
+- **Green eggs (+1 to +5)**: Snake jumps forward and grows
+- **Red eggs (-1 to -5)**: Snake shrinks from the tail
+- Manage your length carefully
+- Both eggs respawn when either is eaten
+
+### ⏱️ Time Trial
+Race against the clock! Collect eggs before time runs out.
+- Start with 30 seconds
+- White eggs: +10 points
+- Golden eggs: +5 seconds (spawn randomly)
+- Hold Shift to boost (3x speed)
+- Eggs vanish after 5 seconds
+
+See [GAMES.md](GAMES.md) for detailed rules and strategies.
+
+## Recent Improvements
+
+### Visual Enhancements
+- **Egg Redesign**: Eggs now have proper egg shape (narrower at top, wider at bottom) instead of simple ellipses
+- **Gradient Effects**: Linear gradients add depth to eggs (white, golden, green, red variants)
+- **Size Optimization**: Reduced egg height from 110% to 85% of cell size to prevent clipping at edges
+- **Enhanced Shadows**: Deeper, more realistic shadows on all eggs
+
+### Responsive Design
+- **Mobile Title Fix**: Home page title uses `clamp()` for fluid scaling on small screens
+- **Touch-Friendly**: Large touch targets for mobile controls
+- **Viewport Optimization**: Content adapts smoothly from 320px to 4K displays
+
+### Analytics Integration
+- **PostHog Setup**: Privacy-focused analytics with minimal tracking
+- **Event Tracking**: `game_started` and `game_ended` events with score
+- **Zero Overhead**: Analytics disabled when env vars not provided
+- **No Session Recording**: Respects user privacy
+- **Type Safety**: Custom `vite-env.d.ts` for environment variable types
 
 ## Development Learnings
 
