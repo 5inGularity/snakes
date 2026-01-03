@@ -117,7 +117,7 @@ export default function TimeTrialSnake() {
     timeExtensionTimerRef.current = 0;
     nextTimeExtensionIntervalRef.current = TIME_EGG_MIN_INTERVAL;
     shiftKeyDownRef.current = false;
-    trackGameStart('Time Trial');
+    trackGameStart("Time Trial");
   }, [resetScore]);
 
   // Touch control handlers
@@ -273,7 +273,7 @@ export default function TimeTrialSnake() {
     }, 1000);
 
     return () => clearInterval(timerInterval);
-  }, [gameOver, isPaused]);
+  }, [gameOver, isPaused, showHint]);
 
   // Game loop with dynamic speed
   useEffect(() => {
@@ -409,13 +409,13 @@ export default function TimeTrialSnake() {
 
   // Track initial game start
   useEffect(() => {
-    trackGameStart('Time Trial');
+    trackGameStart("Time Trial");
   }, []);
 
   // Track game end
   useEffect(() => {
     if (gameOver) {
-      trackGameEnd('Time Trial', score);
+      trackGameEnd("Time Trial", score);
     }
   }, [gameOver, score]);
 
@@ -646,12 +646,33 @@ export default function TimeTrialSnake() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
       ctx.beginPath();
       // Egg-shaped shadow (wider at bottom, narrower at top)
-      ctx.ellipse(centerX + 1.5, centerY + 2, eggWidth / 2, eggHeight / 2.2, 0, 0, Math.PI);
-      ctx.ellipse(centerX + 1.5, centerY + 2, eggWidth / 2.2, eggHeight / 2, 0, Math.PI, Math.PI * 2);
+      ctx.ellipse(
+        centerX + 1.5,
+        centerY + 2,
+        eggWidth / 2,
+        eggHeight / 2.2,
+        0,
+        0,
+        Math.PI
+      );
+      ctx.ellipse(
+        centerX + 1.5,
+        centerY + 2,
+        eggWidth / 2.2,
+        eggHeight / 2,
+        0,
+        Math.PI,
+        Math.PI * 2
+      );
       ctx.fill();
 
       // Egg background with gradient based on type
-      const eggGradient = ctx.createLinearGradient(centerX, centerY - eggHeight / 2, centerX, centerY + eggHeight / 2);
+      const eggGradient = ctx.createLinearGradient(
+        centerX,
+        centerY - eggHeight / 2,
+        centerX,
+        centerY + eggHeight / 2
+      );
       if (egg.type === "regular") {
         eggGradient.addColorStop(0, "#f5f5f5");
         eggGradient.addColorStop(0.5, "#ffffff");
@@ -665,9 +686,25 @@ export default function TimeTrialSnake() {
       ctx.fillStyle = eggGradient;
       ctx.beginPath();
       // Top half (narrower)
-      ctx.ellipse(centerX, centerY, eggWidth / 2, eggHeight / 2.2, 0, 0, Math.PI);
+      ctx.ellipse(
+        centerX,
+        centerY,
+        eggWidth / 2,
+        eggHeight / 2.2,
+        0,
+        0,
+        Math.PI
+      );
       // Bottom half (wider)
-      ctx.ellipse(centerX, centerY, eggWidth / 2.2, eggHeight / 2, 0, Math.PI, Math.PI * 2);
+      ctx.ellipse(
+        centerX,
+        centerY,
+        eggWidth / 2.2,
+        eggHeight / 2,
+        0,
+        Math.PI,
+        Math.PI * 2
+      );
       ctx.fill();
 
       // Add highlight for 3D effect
