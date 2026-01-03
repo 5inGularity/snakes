@@ -21,6 +21,12 @@ function HomePage() {
       description: 'Eat eggs to grow or shrink - manage your length!',
       available: true,
     },
+    {
+      id: 'time-trial',
+      name: 'Time Trial',
+      description: 'Race against time! Collect eggs before the clock runs out.',
+      available: true,
+    },
     // More games will be added here
   ]
 
