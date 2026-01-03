@@ -5,6 +5,7 @@ import { TouchControls } from '../components/TouchControls'
 import { GameContainer } from '../components/GameContainer'
 import { GameHeader } from '../components/GameHeader'
 import { GameOverlay } from '../components/GameOverlay'
+import { trackGameStart, trackGameEnd } from '../lib/analytics'
 
 const GRID_SIZE = 20
 const CELL_SIZE = 30
@@ -100,6 +101,7 @@ export default function AdderSnake() {
     animationRef.current = { type: null, intensity: 0 }
     newSegmentsCountRef.current = 0
     setAnimationTrigger(0)
+    trackGameStart('Adder Snake')
   }, [resetScore])
 
   // Touch control handlers
@@ -338,6 +340,18 @@ export default function AdderSnake() {
       triggerNewHighScoreMessage()
     }
   }, [gameOver, isNewHighScore, triggerNewHighScoreMessage])
+
+  // Track initial game start
+  useEffect(() => {
+    trackGameStart('Adder Snake')
+  }, [])
+
+  // Track game end
+  useEffect(() => {
+    if (gameOver) {
+      trackGameEnd('Adder Snake', score)
+    }
+  }, [gameOver, score])
 
   useEffect(() => {
     const canvas = canvasRef.current

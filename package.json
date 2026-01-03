@@ -15,6 +15,7 @@
     "@tanstack/react-router": "^1.144.0",
     "@vitejs/plugin-react": "^5.1.2",
     "canvas-confetti": "^1.9.4",
+    "posthog-js": "^1.313.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "vite": "^7.3.0",

@@ -5,6 +5,7 @@ import { TouchControls } from '../components/TouchControls'
 import { GameContainer } from '../components/GameContainer'
 import { GameHeader } from '../components/GameHeader'
 import { GameOverlay } from '../components/GameOverlay'
+import { trackGameStart, trackGameEnd } from '../lib/analytics'
 
 const GRID_SIZE = 20
 const CELL_SIZE = 30
@@ -55,6 +56,7 @@ export default function ClassicSnake() {
     resetScore()
     confettiShownRef.current = false
     directionQueueRef.current = []
+    trackGameStart('Classic Snake')
   }, [resetScore])
 
   // Touch control handlers
@@ -193,6 +195,18 @@ export default function ClassicSnake() {
       triggerNewHighScoreMessage()
     }
   }, [gameOver, isNewHighScore, triggerNewHighScoreMessage])
+
+  // Track initial game start
+  useEffect(() => {
+    trackGameStart('Classic Snake')
+  }, [])
+
+  // Track game end
+  useEffect(() => {
+    if (gameOver) {
+      trackGameEnd('Classic Snake', score)
+    }
+  }, [gameOver, score])
 
   useEffect(() => {
     const canvas = canvasRef.current

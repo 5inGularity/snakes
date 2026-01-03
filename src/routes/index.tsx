@@ -15,9 +15,16 @@ function HomePage() {
     setIsLoaded(true)
   }, [])
 
-  const games = [
+  const games: Array<{
+    id: '/classic' | '/adder' | '/time-trial'
+    name: string
+    description: string
+    available: boolean
+    icon: string
+    accent: string
+  }> = [
     {
-      id: 'classic',
+      id: '/classic',
       name: 'Classic Snake',
       description: 'The traditional snake game',
       available: true,
@@ -25,7 +32,7 @@ function HomePage() {
       accent: 'emerald',
     },
     {
-      id: 'adder',
+      id: '/adder',
       name: 'Adder Snake',
       description: 'Eat eggs to grow or shrink - manage your length!',
       available: true,
@@ -33,7 +40,7 @@ function HomePage() {
       accent: 'purple',
     },
     {
-      id: 'time-trial',
+      id: '/time-trial',
       name: 'Time Trial',
       description: 'Race against time! Collect eggs before the clock runs out.',
       available: true,
@@ -172,7 +179,7 @@ function HomePage() {
                   {/* Button */}
                   {game.available ? (
                     <Link
-                      to={`/${game.id}` as '/classic' | '/adder' | '/time-trial'}
+                      to={game.id}
                       className={`relative inline-flex items-center justify-center px-8 py-3 font-bold ${
                         game.accent === 'emerald' ? 'text-cyan-400 border-2 border-cyan-500' :
                         game.accent === 'purple' ? 'text-blue-400 border-2 border-blue-500' :

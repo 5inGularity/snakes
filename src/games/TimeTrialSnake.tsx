@@ -8,6 +8,7 @@ import { TouchControls } from "../components/TouchControls";
 import { GameContainer } from "../components/GameContainer";
 import { GameHeader } from "../components/GameHeader";
 import { GameOverlay } from "../components/GameOverlay";
+import { trackGameStart, trackGameEnd } from "../lib/analytics";
 
 const GRID_SIZE = 20;
 const CELL_SIZE = 30;
@@ -116,6 +117,7 @@ export default function TimeTrialSnake() {
     timeExtensionTimerRef.current = 0;
     nextTimeExtensionIntervalRef.current = TIME_EGG_MIN_INTERVAL;
     shiftKeyDownRef.current = false;
+    trackGameStart('Time Trial');
   }, [resetScore]);
 
   // Touch control handlers
@@ -404,6 +406,18 @@ export default function TimeTrialSnake() {
       triggerNewHighScoreMessage();
     }
   }, [gameOver, isNewHighScore, triggerNewHighScoreMessage]);
+
+  // Track initial game start
+  useEffect(() => {
+    trackGameStart('Time Trial');
+  }, []);
+
+  // Track game end
+  useEffect(() => {
+    if (gameOver) {
+      trackGameEnd('Time Trial', score);
+    }
+  }, [gameOver, score]);
 
   // Canvas rendering
   useEffect(() => {
