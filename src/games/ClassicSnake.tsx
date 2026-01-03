@@ -396,19 +396,28 @@ export default function ClassicSnake() {
     // Draw food as white egg
     const centerX = food.x * CELL_SIZE + CELL_SIZE / 2
     const centerY = food.y * CELL_SIZE + CELL_SIZE / 2
-    const eggWidth = CELL_SIZE * 0.9
-    const eggHeight = CELL_SIZE * 1.1
+    const eggWidth = CELL_SIZE * 0.7
+    const eggHeight = CELL_SIZE * 0.85
 
     // Draw egg shadow for depth
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'
     ctx.beginPath()
-    ctx.ellipse(centerX + 1, centerY + 2, eggWidth / 2, eggHeight / 2, 0, 0, Math.PI * 2)
+    // Egg-shaped shadow (wider at bottom, narrower at top)
+    ctx.ellipse(centerX + 1.5, centerY + 2, eggWidth / 2, eggHeight / 2.2, 0, 0, Math.PI)
+    ctx.ellipse(centerX + 1.5, centerY + 2, eggWidth / 2.2, eggHeight / 2, 0, Math.PI, Math.PI * 2)
     ctx.fill()
 
-    // Egg background (white)
-    ctx.fillStyle = '#ffffff'
+    // Egg background with gradient
+    const eggGradient = ctx.createLinearGradient(centerX, centerY - eggHeight / 2, centerX, centerY + eggHeight / 2)
+    eggGradient.addColorStop(0, '#f5f5f5')
+    eggGradient.addColorStop(0.5, '#ffffff')
+    eggGradient.addColorStop(1, '#e8e8e8')
+    ctx.fillStyle = eggGradient
     ctx.beginPath()
-    ctx.ellipse(centerX, centerY, eggWidth / 2, eggHeight / 2, 0, 0, Math.PI * 2)
+    // Top half (narrower)
+    ctx.ellipse(centerX, centerY, eggWidth / 2, eggHeight / 2.2, 0, 0, Math.PI)
+    // Bottom half (wider)
+    ctx.ellipse(centerX, centerY, eggWidth / 2.2, eggHeight / 2, 0, Math.PI, Math.PI * 2)
     ctx.fill()
 
     // Add highlight for 3D effect
@@ -420,8 +429,8 @@ export default function ClassicSnake() {
       centerY,
       eggHeight / 2
     )
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)')
-    gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.2)')
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)')
+    gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.3)')
     gradient.addColorStop(1, 'rgba(200, 200, 200, 0.3)')
     ctx.fillStyle = gradient
     ctx.fill()

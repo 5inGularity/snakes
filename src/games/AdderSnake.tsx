@@ -577,20 +577,35 @@ export default function AdderSnake() {
       const centerX = egg.position.x * CELL_SIZE + CELL_SIZE / 2
       const centerY = egg.position.y * CELL_SIZE + CELL_SIZE / 2
 
-      // Egg shape - ellipse same size as grid square
-      const eggWidth = CELL_SIZE * 0.9
-      const eggHeight = CELL_SIZE * 1.1
+      // Egg shape - reduced height to fit in cell
+      const eggWidth = CELL_SIZE * 0.7
+      const eggHeight = CELL_SIZE * 0.85
 
       // Draw egg shadow for depth
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'
       ctx.beginPath()
-      ctx.ellipse(centerX + 1, centerY + 2, eggWidth / 2, eggHeight / 2, 0, 0, Math.PI * 2)
+      // Egg-shaped shadow (wider at bottom, narrower at top)
+      ctx.ellipse(centerX + 1.5, centerY + 2, eggWidth / 2, eggHeight / 2.2, 0, 0, Math.PI)
+      ctx.ellipse(centerX + 1.5, centerY + 2, eggWidth / 2.2, eggHeight / 2, 0, Math.PI, Math.PI * 2)
       ctx.fill()
 
-      // Egg background (green or red)
-      ctx.fillStyle = isPositive ? '#10b981' : '#ef4444'
+      // Egg background with gradient (green or red)
+      const eggGradient = ctx.createLinearGradient(centerX, centerY - eggHeight / 2, centerX, centerY + eggHeight / 2)
+      if (isPositive) {
+        eggGradient.addColorStop(0, '#34d399')
+        eggGradient.addColorStop(0.5, '#10b981')
+        eggGradient.addColorStop(1, '#059669')
+      } else {
+        eggGradient.addColorStop(0, '#f87171')
+        eggGradient.addColorStop(0.5, '#ef4444')
+        eggGradient.addColorStop(1, '#dc2626')
+      }
+      ctx.fillStyle = eggGradient
       ctx.beginPath()
-      ctx.ellipse(centerX, centerY, eggWidth / 2, eggHeight / 2, 0, 0, Math.PI * 2)
+      // Top half (narrower)
+      ctx.ellipse(centerX, centerY, eggWidth / 2, eggHeight / 2.2, 0, 0, Math.PI)
+      // Bottom half (wider)
+      ctx.ellipse(centerX, centerY, eggWidth / 2.2, eggHeight / 2, 0, Math.PI, Math.PI * 2)
       ctx.fill()
 
       // Add highlight for 3D effect
@@ -602,9 +617,9 @@ export default function AdderSnake() {
         centerY,
         eggHeight / 2
       )
-      gradient.addColorStop(0, isPositive ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)')
-      gradient.addColorStop(0.3, isPositive ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)')
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)')
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)')
+      gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.3)')
+      gradient.addColorStop(1, 'rgba(200, 200, 200, 0.3)')
       ctx.fillStyle = gradient
       ctx.fill()
 
