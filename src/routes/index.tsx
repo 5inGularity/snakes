@@ -1,6 +1,9 @@
 import { createRoute, Link } from '@tanstack/react-router'
 import { Route as rootRoute } from './__root'
 import { useEffect, useState } from 'react'
+import { GiSnake } from 'react-icons/gi'
+import { FaPlusMinus } from 'react-icons/fa6'
+import { IoTimer } from 'react-icons/io5'
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -20,7 +23,7 @@ function HomePage() {
     name: string
     description: string
     available: boolean
-    icon: string
+    icon: React.ReactNode
     accent: string
   }> = [
     {
@@ -28,7 +31,7 @@ function HomePage() {
       name: 'Classic Snake',
       description: 'The traditional snake game',
       available: true,
-      icon: '🐍',
+      icon: <GiSnake />,
       accent: 'emerald',
     },
     {
@@ -36,7 +39,7 @@ function HomePage() {
       name: 'Adder Snake',
       description: 'Eat eggs to grow or shrink - manage your length!',
       available: true,
-      icon: '⚡',
+      icon: <FaPlusMinus />,
       accent: 'purple',
     },
     {
@@ -44,7 +47,7 @@ function HomePage() {
       name: 'Time Trial',
       description: 'Race against time! Collect eggs before the clock runs out.',
       available: true,
-      icon: '⏱️',
+      icon: <IoTimer />,
       accent: 'cyan',
     },
   ]
@@ -147,7 +150,11 @@ function HomePage() {
                   <div className="relative">
                     {/* Icon - Centered with glow */}
                     <div className="flex items-center justify-center mb-6">
-                      <div className={`text-6xl transform group-hover:scale-110 transition-transform duration-300`} style={{
+                      <div className={`text-6xl transform group-hover:scale-110 transition-transform duration-300 ${
+                        game.accent === 'emerald' ? 'text-cyan-400' :
+                        game.accent === 'purple' ? 'text-blue-400' :
+                        'text-cyan-300'
+                      }`} style={{
                         filter: game.accent === 'emerald' ? 'drop-shadow(0 0 10px #00FFFF)' :
                                 game.accent === 'purple' ? 'drop-shadow(0 0 10px #0066FF)' :
                                 'drop-shadow(0 0 10px #00FFFF)'
