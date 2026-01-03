@@ -34,11 +34,17 @@ export function TouchControls({
     const canvas = canvasRef.current
 
     const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault() // Prevent scrolling
       const touch = e.touches[0]
       swipeStartRef.current = { x: touch.clientX, y: touch.clientY }
     }
 
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault() // Prevent scrolling while swiping
+    }
+
     const handleTouchEnd = (e: TouchEvent) => {
+      e.preventDefault() // Prevent scrolling
       if (!swipeStartRef.current) return
 
       const touch = e.changedTouches[0]
@@ -66,11 +72,13 @@ export function TouchControls({
       swipeStartRef.current = null
     }
 
-    canvas.addEventListener('touchstart', handleTouchStart)
-    canvas.addEventListener('touchend', handleTouchEnd)
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false })
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false })
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false })
 
     return () => {
       canvas.removeEventListener('touchstart', handleTouchStart)
+      canvas.removeEventListener('touchmove', handleTouchMove)
       canvas.removeEventListener('touchend', handleTouchEnd)
     }
   }, [isTouchDevice, onDirectionChange])
@@ -92,13 +100,10 @@ export function TouchControls({
   if (!isTouchDevice) return null
 
   return (
-    <>
-      {/* D-Pad */}
-      <div className="touch-controls">
+    <div className="touch-controls">
+      <div className="relative flex items-center justify-center gap-8">
+        {/* D-Pad */}
         <div className="dpad-container">
-          {/* Center */}
-          <div className="dpad-center"></div>
-
           {/* Up */}
           <button
             className="dpad-button dpad-up"
@@ -135,19 +140,19 @@ export function TouchControls({
             ▶
           </button>
         </div>
-      </div>
 
-      {/* Boost Button */}
-      {showBoost && onBoost && (
-        <button
-          className="boost-button"
-          onTouchStart={handleBoostStart}
-          onTouchEnd={handleBoostEnd}
-          aria-label="Boost"
-        >
-          ⚡
-        </button>
-      )}
+        {/* Boost Button */}
+        {showBoost && onBoost && (
+          <button
+            className="boost-button"
+            onTouchStart={handleBoostStart}
+            onTouchEnd={handleBoostEnd}
+            aria-label="Boost"
+          >
+            ⚡
+          </button>
+        )}
+      </div>
 
       {/* Pause Button */}
       {showPause && onPause && (
@@ -159,6 +164,6 @@ export function TouchControls({
           ⏸
         </button>
       )}
-    </>
+    </div>
   )
 }

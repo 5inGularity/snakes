@@ -43,7 +43,7 @@ function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative">
       {/* Tron-style background */}
       <div className="fixed inset-0 bg-black">
         <div className="absolute inset-0 bg-grid-pattern"></div>
