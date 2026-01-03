@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link } from '@tanstack/react-router'
 import { useHighScore } from '../hooks/useHighScore'
 import { triggerHighScoreCelebration, triggerGameOverCelebration } from '../utils/celebration'
+import { TouchControls } from '../components/TouchControls'
+import { GameContainer } from '../components/GameContainer'
+import { GameHeader } from '../components/GameHeader'
+import { GameOverlay } from '../components/GameOverlay'
 
 const GRID_SIZE = 20
 const CELL_SIZE = 30
@@ -21,7 +24,6 @@ type Egg = {
 export default function AdderSnake() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [snake, setSnake] = useState<Position[]>(INITIAL_SNAKE)
-  const [direction, setDirection] = useState<Direction>(INITIAL_DIRECTION)
   const [eggs, setEggs] = useState<[Egg, Egg]>(() => [
     generatePositiveEgg(INITIAL_SNAKE, []),
     generateNegativeEgg(INITIAL_SNAKE, [])
@@ -87,7 +89,6 @@ export default function AdderSnake() {
 
   const resetGame = useCallback(() => {
     setSnake(INITIAL_SNAKE)
-    setDirection(INITIAL_DIRECTION)
     directionRef.current = INITIAL_DIRECTION
     const positiveEgg = generatePositiveEgg(INITIAL_SNAKE, [])
     setEggs([positiveEgg, generateNegativeEgg(INITIAL_SNAKE, [positiveEgg])])
@@ -100,6 +101,32 @@ export default function AdderSnake() {
     newSegmentsCountRef.current = 0
     setAnimationTrigger(0)
   }, [resetScore])
+
+  // Touch control handlers
+  const handleTouchDirection = useCallback((direction: Direction) => {
+    if (gameOver) return
+
+    const queue = directionQueueRef.current
+    const lastDir = queue.length > 0 ? queue[queue.length - 1] : directionRef.current
+
+    // Prevent 180° turns (same logic as keyboard)
+    if (
+      (direction.x !== 0 && lastDir.x === 0 && lastDir.y !== 0) ||
+      (direction.y !== 0 && lastDir.y === 0 && lastDir.x !== 0)
+    ) {
+      if (queue.length < 2) {
+        queue.push(direction)
+      }
+    }
+  }, [gameOver])
+
+  const handlePause = useCallback(() => {
+    if (gameOver) {
+      resetGame()
+    } else {
+      setIsPaused(prev => !prev)
+    }
+  }, [gameOver, resetGame])
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -174,7 +201,6 @@ export default function AdderSnake() {
       if (directionQueueRef.current.length > 0) {
         const nextDir = directionQueueRef.current.shift()!
         directionRef.current = nextDir
-        setDirection(nextDir)
       }
 
       setSnake(currentSnake => {
@@ -599,65 +625,46 @@ export default function AdderSnake() {
   }, [snake, eggs, gameOver, animationTrigger])
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-2xl">
-        <div className="flex items-center justify-between mb-8">
-          <Link
-            to="/"
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors"
-          >
-            ← Back
-          </Link>
-          <h1 className="text-3xl font-bold">Adder Snake</h1>
-          <div className="text-right">
-            <div className="text-2xl font-bold">Score: {score}</div>
-            <div className="text-sm text-gray-400">High: {highScore}</div>
-          </div>
-        </div>
+    <GameContainer theme="blue">
+      <GameHeader
+        title="Adder Snake"
+        score={score}
+        highScore={highScore}
+        theme="blue"
+      />
 
-        <div className="bg-gray-800 p-8 rounded-lg shadow-xl">
-          <div className="flex justify-center mb-6">
-            <canvas
-              ref={canvasRef}
-              width={GRID_SIZE * CELL_SIZE}
-              height={GRID_SIZE * CELL_SIZE}
-              className="border-2 border-gray-600 rounded"
-            />
-          </div>
+      {/* Canvas */}
+      <div className="flex justify-center">
+        <div className="w-full max-w-[600px] relative">
+          <canvas
+            ref={canvasRef}
+            width={GRID_SIZE * CELL_SIZE}
+            height={GRID_SIZE * CELL_SIZE}
+            className="border-2 border-blue-500/50 w-full h-auto"
+            style={{
+              boxShadow: '0 0 20px rgba(0, 102, 255, 0.2)',
+              maxWidth: '100%',
+              aspectRatio: '1 / 1'
+            }}
+          />
 
-          {gameOver && (
-            <div className="text-center mb-4">
-              <p className="text-2xl font-bold text-red-500 mb-4">Game Over!</p>
-              {showNewHighScore && (
-                <p className="text-3xl font-bold text-yellow-400 mb-4 animate-fade-out">
-                  🎉 New High Score! 🎉
-                </p>
-              )}
-              <p className="text-gray-400 mb-4">Press Space to restart</p>
-              <button
-                onClick={resetGame}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition-colors"
-              >
-                Play Again
-              </button>
-            </div>
-          )}
-
-          {isPaused && !gameOver && (
-            <div className="text-center mb-4">
-              <p className="text-2xl font-bold text-yellow-500">Paused</p>
-            </div>
-          )}
-
-          {!gameOver && (
-            <div className="text-center text-gray-400">
-              <p className="mb-2">Use arrow keys to move</p>
-              <p className="mb-2">Green eggs (+) grow your snake, Red eggs (-) shrink it</p>
-              <p>Press Space to pause</p>
-            </div>
-          )}
+          <GameOverlay
+            gameOver={gameOver}
+            isPaused={isPaused}
+            showNewHighScore={showNewHighScore}
+            onRestart={resetGame}
+            theme="blue"
+          />
         </div>
       </div>
-    </div>
+
+      {/* Touch Controls */}
+      <TouchControls
+        onDirectionChange={handleTouchDirection}
+        onPause={handlePause}
+        showBoost={false}
+        showPause={false}
+      />
+    </GameContainer>
   )
 }
