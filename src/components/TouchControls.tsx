@@ -6,6 +6,7 @@ interface TouchControlsProps {
   onPause?: () => void
   showBoost?: boolean
   showPause?: boolean
+  theme?: 'cyan' | 'magenta'
 }
 
 export function TouchControls({
@@ -14,6 +15,7 @@ export function TouchControls({
   onPause,
   showBoost = false,
   showPause = true,
+  theme = 'cyan',
 }: TouchControlsProps) {
   const [isTouchDevice, setIsTouchDevice] = useState(false)
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null)
@@ -97,6 +99,24 @@ export function TouchControls({
     onBoost?.(false)
   }
 
+  // Theme colors
+  const themeColors = {
+    cyan: {
+      border: 'rgba(6, 182, 212, 0.5)',
+      active: 'rgba(6, 182, 212, 0.3)',
+      activeBorder: 'rgb(6, 182, 212)',
+      activeText: 'rgb(6, 182, 212)',
+    },
+    magenta: {
+      border: 'rgba(236, 72, 153, 0.5)',
+      active: 'rgba(236, 72, 153, 0.3)',
+      activeBorder: 'rgb(236, 72, 153)',
+      activeText: 'rgb(236, 72, 153)',
+    },
+  }
+
+  const colors = themeColors[theme]
+
   if (!isTouchDevice) return null
 
   return (
@@ -109,6 +129,19 @@ export function TouchControls({
             className="dpad-button dpad-up"
             onTouchStart={() => handleDPadPress({ x: 0, y: -1 })}
             aria-label="Up"
+            style={{
+              borderColor: colors.border,
+            }}
+            onTouchStartCapture={(e) => {
+              e.currentTarget.style.background = colors.active
+              e.currentTarget.style.borderColor = colors.activeBorder
+              e.currentTarget.style.color = colors.activeText
+            }}
+            onTouchEnd={(e) => {
+              e.currentTarget.style.background = ''
+              e.currentTarget.style.borderColor = colors.border
+              e.currentTarget.style.color = ''
+            }}
           >
             ▲
           </button>
@@ -118,6 +151,19 @@ export function TouchControls({
             className="dpad-button dpad-down"
             onTouchStart={() => handleDPadPress({ x: 0, y: 1 })}
             aria-label="Down"
+            style={{
+              borderColor: colors.border,
+            }}
+            onTouchStartCapture={(e) => {
+              e.currentTarget.style.background = colors.active
+              e.currentTarget.style.borderColor = colors.activeBorder
+              e.currentTarget.style.color = colors.activeText
+            }}
+            onTouchEnd={(e) => {
+              e.currentTarget.style.background = ''
+              e.currentTarget.style.borderColor = colors.border
+              e.currentTarget.style.color = ''
+            }}
           >
             ▼
           </button>
@@ -127,6 +173,19 @@ export function TouchControls({
             className="dpad-button dpad-left"
             onTouchStart={() => handleDPadPress({ x: -1, y: 0 })}
             aria-label="Left"
+            style={{
+              borderColor: colors.border,
+            }}
+            onTouchStartCapture={(e) => {
+              e.currentTarget.style.background = colors.active
+              e.currentTarget.style.borderColor = colors.activeBorder
+              e.currentTarget.style.color = colors.activeText
+            }}
+            onTouchEnd={(e) => {
+              e.currentTarget.style.background = ''
+              e.currentTarget.style.borderColor = colors.border
+              e.currentTarget.style.color = ''
+            }}
           >
             ◀
           </button>
@@ -136,6 +195,19 @@ export function TouchControls({
             className="dpad-button dpad-right"
             onTouchStart={() => handleDPadPress({ x: 1, y: 0 })}
             aria-label="Right"
+            style={{
+              borderColor: colors.border,
+            }}
+            onTouchStartCapture={(e) => {
+              e.currentTarget.style.background = colors.active
+              e.currentTarget.style.borderColor = colors.activeBorder
+              e.currentTarget.style.color = colors.activeText
+            }}
+            onTouchEnd={(e) => {
+              e.currentTarget.style.background = ''
+              e.currentTarget.style.borderColor = colors.border
+              e.currentTarget.style.color = ''
+            }}
           >
             ▶
           </button>

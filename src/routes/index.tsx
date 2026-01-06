@@ -1,7 +1,7 @@
 import { createRoute, Link } from '@tanstack/react-router'
 import { Route as rootRoute } from './__root'
 import { useEffect, useState } from 'react'
-import { GiSnake } from 'react-icons/gi'
+import { GiSnake, GiDna2 } from 'react-icons/gi'
 import { FaPlusMinus } from 'react-icons/fa6'
 import { IoTimer } from 'react-icons/io5'
 
@@ -19,7 +19,7 @@ function HomePage() {
   }, [])
 
   const games: Array<{
-    id: '/classic' | '/adder' | '/time-trial'
+    id: '/classic' | '/adder' | '/time-trial' | '/double-helix'
     name: string
     description: string
     available: boolean
@@ -49,6 +49,14 @@ function HomePage() {
       available: true,
       icon: <IoTimer />,
       accent: 'cyan',
+    },
+    {
+      id: '/double-helix',
+      name: 'Double Helix',
+      description: 'Control two snakes! Avoid collisions. Arrow keys + WASD.',
+      available: true,
+      icon: <GiDna2 />,
+      accent: 'magenta',
     },
   ]
 
@@ -114,6 +122,7 @@ function HomePage() {
                 <div className={`absolute -inset-1 ${
                   game.accent === 'emerald' ? 'bg-cyan-400' :
                   game.accent === 'purple' ? 'bg-blue-500' :
+                  game.accent === 'magenta' ? 'bg-pink-500' :
                   'bg-cyan-500'
                 } opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-500`}></div>
 
@@ -121,15 +130,18 @@ function HomePage() {
                 <div className={`relative bg-black/90 backdrop-blur-sm border-2 ${
                   game.accent === 'emerald' ? 'border-cyan-500/50' :
                   game.accent === 'purple' ? 'border-blue-500/50' :
+                  game.accent === 'magenta' ? 'border-pink-500/50' :
                   'border-cyan-400/50'
                 } p-8 min-h-[360px] flex flex-col justify-between overflow-hidden ${
                   game.accent === 'emerald' ? 'group-hover:border-cyan-400' :
                   game.accent === 'purple' ? 'group-hover:border-blue-400' :
+                  game.accent === 'magenta' ? 'group-hover:border-pink-400' :
                   'group-hover:border-cyan-300'
                 } transition-all duration-300`} style={{
                   clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%)',
                   boxShadow: game.accent === 'emerald' ? '0 0 20px rgba(0, 255, 255, 0.1)' :
                              game.accent === 'purple' ? '0 0 20px rgba(0, 102, 255, 0.1)' :
+                             game.accent === 'magenta' ? '0 0 20px rgba(236, 72, 153, 0.1)' :
                              '0 0 20px rgba(0, 255, 255, 0.1)'
                 }}>
                   {/* Scanline effect */}
@@ -139,11 +151,13 @@ function HomePage() {
                   <div className={`absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 ${
                     game.accent === 'emerald' ? 'border-cyan-400' :
                     game.accent === 'purple' ? 'border-blue-400' :
+                    game.accent === 'magenta' ? 'border-pink-400' :
                     'border-cyan-300'
                   } opacity-50`}></div>
                   <div className={`absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 ${
                     game.accent === 'emerald' ? 'border-cyan-400' :
                     game.accent === 'purple' ? 'border-blue-400' :
+                    game.accent === 'magenta' ? 'border-pink-400' :
                     'border-cyan-300'
                   } opacity-50`}></div>
 
@@ -153,10 +167,12 @@ function HomePage() {
                       <div className={`text-6xl transform group-hover:scale-110 transition-transform duration-300 ${
                         game.accent === 'emerald' ? 'text-cyan-400' :
                         game.accent === 'purple' ? 'text-blue-400' :
+                        game.accent === 'magenta' ? 'text-pink-400' :
                         'text-cyan-300'
                       }`} style={{
                         filter: game.accent === 'emerald' ? 'drop-shadow(0 0 10px #00FFFF)' :
                                 game.accent === 'purple' ? 'drop-shadow(0 0 10px #0066FF)' :
+                                game.accent === 'magenta' ? 'drop-shadow(0 0 10px #ec4899)' :
                                 'drop-shadow(0 0 10px #00FFFF)'
                       }}>
                         {game.icon}
@@ -167,11 +183,13 @@ function HomePage() {
                     <h2 className={`text-xl sm:text-2xl font-bold mb-4 text-center uppercase tracking-widest ${
                       game.accent === 'emerald' ? 'text-cyan-400' :
                       game.accent === 'purple' ? 'text-blue-400' :
+                      game.accent === 'magenta' ? 'text-pink-400' :
                       'text-cyan-300'
                     } transition-all duration-300`} style={{
                       fontFamily: "'Orbitron', sans-serif",
                       textShadow: game.accent === 'emerald' ? '0 0 10px #00FFFF' :
                                   game.accent === 'purple' ? '0 0 10px #0066FF' :
+                                  game.accent === 'magenta' ? '0 0 10px #ec4899' :
                                   '0 0 10px #00FFFF'
                     }}>
                       {game.name}
@@ -190,6 +208,7 @@ function HomePage() {
                       className={`relative inline-flex items-center justify-center px-8 py-3 font-bold ${
                         game.accent === 'emerald' ? 'text-cyan-400 border-2 border-cyan-500' :
                         game.accent === 'purple' ? 'text-blue-400 border-2 border-blue-500' :
+                        game.accent === 'magenta' ? 'text-pink-400 border-2 border-pink-500' :
                         'text-cyan-300 border-2 border-cyan-400'
                       } overflow-hidden group/btn transition-all duration-300 uppercase tracking-widest text-sm`}
                       style={{
@@ -197,6 +216,7 @@ function HomePage() {
                         clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
                         textShadow: game.accent === 'emerald' ? '0 0 5px #00FFFF' :
                                     game.accent === 'purple' ? '0 0 5px #0066FF' :
+                                    game.accent === 'magenta' ? '0 0 5px #ec4899' :
                                     '0 0 5px #00FFFF'
                       }}
                     >
@@ -208,6 +228,7 @@ function HomePage() {
                       <div className={`absolute inset-0 ${
                         game.accent === 'emerald' ? 'bg-cyan-500' :
                         game.accent === 'purple' ? 'bg-blue-500' :
+                        game.accent === 'magenta' ? 'bg-pink-500' :
                         'bg-cyan-400'
                       } opacity-0 group-hover/btn:opacity-20 transition-opacity duration-300`}></div>
                     </Link>

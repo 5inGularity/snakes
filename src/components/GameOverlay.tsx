@@ -3,7 +3,7 @@ type GameOverlayProps = {
   isPaused: boolean
   showNewHighScore: boolean
   onRestart: () => void
-  theme: 'cyan' | 'blue'
+  theme: 'cyan' | 'blue' | 'magenta'
 }
 
 export function GameOverlay({
@@ -29,6 +29,14 @@ export function GameOverlay({
       shadow: '0 0 5px #0066FF',
       shadowStrong: '0 0 10px #0066FF, 0 0 20px #0066FF',
       text: 'text-blue-500/70'
+    },
+    magenta: {
+      primary: 'text-pink-400',
+      border: 'border-pink-500',
+      bg: 'bg-pink-500',
+      shadow: '0 0 5px #ec4899',
+      shadowStrong: '0 0 10px #ec4899, 0 0 20px #ec4899',
+      text: 'text-pink-500/70'
     }
   }
 

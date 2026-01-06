@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 type GameContainerProps = {
   children: ReactNode
-  theme: 'cyan' | 'blue'
+  theme: 'cyan' | 'blue' | 'magenta'
 }
 
 export function GameContainer({ children, theme }: GameContainerProps) {
@@ -16,6 +16,11 @@ export function GameContainer({ children, theme }: GameContainerProps) {
       border: 'border-blue-500/50',
       borderAccent: 'border-blue-400',
       shadow: '0 0 20px rgba(0, 102, 255, 0.1)'
+    },
+    magenta: {
+      border: 'border-pink-500/50',
+      borderAccent: 'border-pink-400',
+      shadow: '0 0 20px rgba(236, 72, 153, 0.1)'
     }
   }
 
