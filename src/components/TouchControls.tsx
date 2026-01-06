@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Joystick } from './Joystick'
 
 interface TouchControlsProps {
   onDirectionChange: (direction: { x: number; y: number }) => void
@@ -85,11 +86,6 @@ export function TouchControls({
     }
   }, [isTouchDevice, onDirectionChange])
 
-  // D-Pad button handlers
-  const handleDPadPress = (direction: { x: number; y: number }) => {
-    onDirectionChange(direction)
-  }
-
   // Boost button handlers
   const handleBoostStart = () => {
     onBoost?.(true)
@@ -99,119 +95,14 @@ export function TouchControls({
     onBoost?.(false)
   }
 
-  // Theme colors
-  const themeColors = {
-    cyan: {
-      border: 'rgba(6, 182, 212, 0.5)',
-      active: 'rgba(6, 182, 212, 0.3)',
-      activeBorder: 'rgb(6, 182, 212)',
-      activeText: 'rgb(6, 182, 212)',
-    },
-    magenta: {
-      border: 'rgba(236, 72, 153, 0.5)',
-      active: 'rgba(236, 72, 153, 0.3)',
-      activeBorder: 'rgb(236, 72, 153)',
-      activeText: 'rgb(236, 72, 153)',
-    },
-  }
-
-  const colors = themeColors[theme]
 
   if (!isTouchDevice) return null
 
   return (
     <div className="touch-controls">
       <div className="relative flex items-center justify-center gap-8">
-        {/* D-Pad */}
-        <div className="dpad-container">
-          {/* Up */}
-          <button
-            className="dpad-button dpad-up"
-            onTouchStart={() => handleDPadPress({ x: 0, y: -1 })}
-            aria-label="Up"
-            style={{
-              borderColor: colors.border,
-            }}
-            onTouchStartCapture={(e) => {
-              e.currentTarget.style.background = colors.active
-              e.currentTarget.style.borderColor = colors.activeBorder
-              e.currentTarget.style.color = colors.activeText
-            }}
-            onTouchEnd={(e) => {
-              e.currentTarget.style.background = ''
-              e.currentTarget.style.borderColor = colors.border
-              e.currentTarget.style.color = ''
-            }}
-          >
-            ▲
-          </button>
-
-          {/* Down */}
-          <button
-            className="dpad-button dpad-down"
-            onTouchStart={() => handleDPadPress({ x: 0, y: 1 })}
-            aria-label="Down"
-            style={{
-              borderColor: colors.border,
-            }}
-            onTouchStartCapture={(e) => {
-              e.currentTarget.style.background = colors.active
-              e.currentTarget.style.borderColor = colors.activeBorder
-              e.currentTarget.style.color = colors.activeText
-            }}
-            onTouchEnd={(e) => {
-              e.currentTarget.style.background = ''
-              e.currentTarget.style.borderColor = colors.border
-              e.currentTarget.style.color = ''
-            }}
-          >
-            ▼
-          </button>
-
-          {/* Left */}
-          <button
-            className="dpad-button dpad-left"
-            onTouchStart={() => handleDPadPress({ x: -1, y: 0 })}
-            aria-label="Left"
-            style={{
-              borderColor: colors.border,
-            }}
-            onTouchStartCapture={(e) => {
-              e.currentTarget.style.background = colors.active
-              e.currentTarget.style.borderColor = colors.activeBorder
-              e.currentTarget.style.color = colors.activeText
-            }}
-            onTouchEnd={(e) => {
-              e.currentTarget.style.background = ''
-              e.currentTarget.style.borderColor = colors.border
-              e.currentTarget.style.color = ''
-            }}
-          >
-            ◀
-          </button>
-
-          {/* Right */}
-          <button
-            className="dpad-button dpad-right"
-            onTouchStart={() => handleDPadPress({ x: 1, y: 0 })}
-            aria-label="Right"
-            style={{
-              borderColor: colors.border,
-            }}
-            onTouchStartCapture={(e) => {
-              e.currentTarget.style.background = colors.active
-              e.currentTarget.style.borderColor = colors.activeBorder
-              e.currentTarget.style.color = colors.activeText
-            }}
-            onTouchEnd={(e) => {
-              e.currentTarget.style.background = ''
-              e.currentTarget.style.borderColor = colors.border
-              e.currentTarget.style.color = ''
-            }}
-          >
-            ▶
-          </button>
-        </div>
+        {/* Joystick */}
+        <Joystick onDirectionChange={onDirectionChange} theme={theme} />
 
         {/* Boost Button */}
         {showBoost && onBoost && (
