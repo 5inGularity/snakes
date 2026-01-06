@@ -2,7 +2,7 @@ import { createRoute, Link } from '@tanstack/react-router'
 import { Route as rootRoute } from './__root'
 import { useEffect, useState } from 'react'
 import { GiSnake, GiDna2 } from 'react-icons/gi'
-import { FaPlusMinus } from 'react-icons/fa6'
+import { FaPlusMinus, FaPalette } from 'react-icons/fa6'
 import { IoTimer } from 'react-icons/io5'
 import { initAnalytics } from '../lib/analytics'
 
@@ -20,7 +20,7 @@ function HomePage() {
   }, [])
 
   const games: Array<{
-    id: '/classic' | '/adder' | '/time-trial' | '/double-helix'
+    id: '/classic' | '/adder' | '/time-trial' | '/double-helix' | '/picassonake'
     name: string
     description: string
     available: boolean
@@ -58,6 +58,14 @@ function HomePage() {
       available: true,
       icon: <GiDna2 />,
       accent: 'magenta',
+    },
+    {
+      id: '/picassonake',
+      name: 'Picassonake',
+      description: 'Paint patterns with eggs! Master all 10 patterns to win.',
+      available: true,
+      icon: <FaPalette />,
+      accent: 'purple',
     },
   ]
 

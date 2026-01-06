@@ -5,8 +5,10 @@ interface TouchControlsProps {
   onDirectionChange: (direction: { x: number; y: number }) => void
   onBoost?: (active: boolean) => void
   onPause?: () => void
+  onLayEgg?: () => void
   showBoost?: boolean
   showPause?: boolean
+  showLayEgg?: boolean
   theme?: 'cyan' | 'magenta'
 }
 
@@ -14,8 +16,10 @@ export function TouchControls({
   onDirectionChange,
   onBoost,
   onPause,
+  onLayEgg,
   showBoost = false,
   showPause = true,
+  showLayEgg = false,
   theme = 'cyan',
 }: TouchControlsProps) {
   const [isTouchDevice, setIsTouchDevice] = useState(false)
@@ -113,6 +117,17 @@ export function TouchControls({
             aria-label="Boost"
           >
             ⚡
+          </button>
+        )}
+
+        {/* Lay Egg Button */}
+        {showLayEgg && onLayEgg && (
+          <button
+            className="boost-button"
+            onClick={onLayEgg}
+            aria-label="Lay Egg"
+          >
+            🥚
           </button>
         )}
       </div>

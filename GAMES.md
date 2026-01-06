@@ -36,3 +36,33 @@ A strategic variant where eggs have different values that affect your snake's le
 **Controls:**
 - Arrow keys to move
 - Space to pause/restart
+
+---
+
+## Picassonake
+
+A creative puzzle variant where you paint patterns with eggs laid by your snake's tail.
+
+**Rules:**
+- A faint pattern overlay shows which cells need eggs
+- Press **Shift** to lay/pick up an egg at your tail position
+- Snake grows automatically every 30 seconds
+- Speed increases by 10% every 30 seconds (capped at 400%)
+- Complete a pattern by achieving 100% match to unlock the next one
+- Score = (100 × completed patterns) + current pattern percentage
+- Die if you collide with yourself
+- Board wraps around edges
+- 10 patterns total:
+  - **Easy (1-5):** Cross, Square, Diagonal, Diamond, T-shape
+  - **Hard (6-10):** Spiral, Checkerboard, Concentric Squares, Zigzag, Smiley Face
+
+**Strategy:**
+- Plan your path to cover all pattern cells efficiently
+- Use the automatic growth strategically - more length means more maneuverability
+- As speed increases, precise egg placement becomes more challenging
+- Pick up incorrectly placed eggs to correct mistakes
+
+**Controls:**
+- Arrow keys to move
+- **Shift** to lay/pick up egg at tail position
+- Space to pause/restart or advance to next pattern
