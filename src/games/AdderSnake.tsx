@@ -6,6 +6,7 @@ import { GameContainer } from '../components/GameContainer'
 import { GameHeader } from '../components/GameHeader'
 import { GameOverlay } from '../components/GameOverlay'
 import { trackGameStart, trackGameEnd } from '../lib/analytics'
+import { initAudio, playGrowSound, playShrinkSound, playDeathSound, playHighScoreSound } from '../utils/sound'
 
 const GRID_SIZE = 20
 const CELL_SIZE = 30
@@ -106,6 +107,9 @@ export default function AdderSnake() {
 
   // Touch control handlers
   const handleTouchDirection = useCallback((direction: Direction) => {
+    // Initialize audio on first touch interaction
+    initAudio()
+
     if (gameOver) return
 
     const queue = directionQueueRef.current
@@ -132,6 +136,9 @@ export default function AdderSnake() {
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // Initialize audio on first user interaction
+      initAudio()
+
       // Handle spacebar
       if (e.key === ' ') {
         e.preventDefault()
@@ -242,6 +249,7 @@ export default function AdderSnake() {
             for (const seg of newSegments) {
               if (currentSnake.some(s => s.x === seg.x && s.y === seg.y)) {
                 setGameOver(true)
+                playDeathSound()
                 return currentSnake
               }
             }
@@ -251,6 +259,9 @@ export default function AdderSnake() {
             // Trigger growth animation
             animationRef.current = { type: 'grow', intensity: 1.0 }
             newSegmentsCountRef.current = jumpDistance
+
+            // Play grow sound
+            playGrowSound()
 
             // Regenerate BOTH eggs
             const newPositiveEgg = generatePositiveEgg(finalSnake, [])
@@ -273,6 +284,7 @@ export default function AdderSnake() {
             // Check collision with self
             if (currentSnake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
               setGameOver(true)
+              playDeathSound()
               return currentSnake
             }
 
@@ -287,6 +299,7 @@ export default function AdderSnake() {
               newSegmentsCountRef.current = segmentsToRemove
 
               setGameOver(true)
+              playDeathSound()
               // Return just the head in dead state
               return [newHead]
             }
@@ -294,6 +307,9 @@ export default function AdderSnake() {
             // Trigger shrink animation
             animationRef.current = { type: 'shrink', intensity: 1.0 }
             newSegmentsCountRef.current = segmentsToRemove
+
+            // Play shrink sound
+            playShrinkSound()
 
             // Regenerate BOTH eggs (only if still alive)
             const newPositiveEgg = generatePositiveEgg(finalSnake, [])
@@ -330,6 +346,7 @@ export default function AdderSnake() {
     if (isNewHighScore && highScore > 0 && !confettiShownRef.current && !gameOver) {
       confettiShownRef.current = true
       triggerHighScoreCelebration()
+      playHighScoreSound()
     }
   }, [isNewHighScore, highScore, gameOver])
 

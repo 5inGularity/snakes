@@ -6,6 +6,7 @@ import { GameContainer } from '../components/GameContainer'
 import { GameHeader } from '../components/GameHeader'
 import { GameOverlay } from '../components/GameOverlay'
 import { trackGameStart, trackGameEnd } from '../lib/analytics'
+import { initAudio, playEatSound, playDeathSound, playHighScoreSound } from '../utils/sound'
 
 const GRID_SIZE = 20
 const CELL_SIZE = 30
@@ -61,6 +62,9 @@ export default function ClassicSnake() {
 
   // Touch control handlers
   const handleTouchDirection = useCallback((direction: Direction) => {
+    // Initialize audio on first touch interaction
+    initAudio()
+
     if (gameOver) return
 
     const queue = directionQueueRef.current
@@ -87,6 +91,9 @@ export default function ClassicSnake() {
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // Initialize audio on first user interaction
+      initAudio()
+
       // Handle spacebar
       if (e.key === ' ') {
         e.preventDefault()
@@ -159,6 +166,7 @@ export default function ClassicSnake() {
         // Check collision with self
         if (currentSnake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
           setGameOver(true)
+          playDeathSound()
           return currentSnake
         }
 
@@ -168,6 +176,7 @@ export default function ClassicSnake() {
         if (newHead.x === food.x && newHead.y === food.y) {
           setFood(generateFood(newSnake))
           incrementScore(10)
+          playEatSound()
           return newSnake
         }
 
@@ -185,6 +194,7 @@ export default function ClassicSnake() {
     if (isNewHighScore && highScore > 0 && !confettiShownRef.current && !gameOver) {
       confettiShownRef.current = true
       triggerHighScoreCelebration()
+      playHighScoreSound()
     }
   }, [isNewHighScore, highScore, gameOver])
 

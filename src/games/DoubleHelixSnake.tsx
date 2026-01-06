@@ -6,6 +6,7 @@ import { GameContainer } from '../components/GameContainer'
 import { GameHeader } from '../components/GameHeader'
 import { GameOverlay } from '../components/GameOverlay'
 import { trackGameStart, trackGameEnd } from '../lib/analytics'
+import { initAudio, playEatSound, playDeathSound, playHighScoreSound } from '../utils/sound'
 
 const GRID_SIZE = 20
 const CELL_SIZE = 30
@@ -117,6 +118,9 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // Initialize audio on first user interaction
+      initAudio()
+
       // Handle spacebar
       if (e.key === ' ') {
         e.preventDefault()
@@ -226,6 +230,7 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
         // Check collision with self
         if (currentSnake1.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
           setGameOver(true)
+          playDeathSound()
           return currentSnake1
         }
 
@@ -241,6 +246,7 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
           setEggs(newEggs)
           eggsRef.current = newEggs
           incrementScore(10)
+          playEatSound()
           return newSnake
         }
 
@@ -260,6 +266,7 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
         // Check collision with self
         if (currentSnake2.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
           setGameOver(true)
+          playDeathSound()
           return currentSnake2
         }
 
@@ -275,6 +282,7 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
           setEggs(newEggs)
           eggsRef.current = newEggs
           incrementScore(10)
+          playEatSound()
           return newSnake
         }
 
@@ -303,6 +311,7 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
 
     if (snake1CollidesWith2 || snake2CollidesWith1) {
       setGameOver(true)
+      playDeathSound()
     }
   }, [snake1, snake2, hardcore, gameOver, isPaused])
 
@@ -311,6 +320,7 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
     if (isNewHighScore && highScore > 0 && !confettiShownRef.current && !gameOver) {
       confettiShownRef.current = true
       triggerHighScoreCelebration()
+      playHighScoreSound()
     }
   }, [isNewHighScore, highScore, gameOver])
 
@@ -623,6 +633,9 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
         <div className="flex-1 flex justify-center">
           <TouchControls
             onDirectionChange={(dir) => {
+              // Initialize audio on first touch interaction
+              initAudio()
+
               const queue = directionQueue1Ref.current
               const lastDir = queue.length > 0 ? queue[queue.length - 1] : direction1Ref.current
               if (
@@ -642,6 +655,9 @@ export default function DoubleHelixSnake({ hardcore = false }: DoubleHelixSnakeP
         <div className="flex-1 flex justify-center">
           <TouchControls
             onDirectionChange={(dir) => {
+              // Initialize audio on first touch interaction
+              initAudio()
+
               const queue = directionQueue2Ref.current
               const lastDir = queue.length > 0 ? queue[queue.length - 1] : direction2Ref.current
               if (

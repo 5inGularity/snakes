@@ -9,6 +9,7 @@ import { GameContainer } from "../components/GameContainer";
 import { GameHeader } from "../components/GameHeader";
 import { GameOverlay } from "../components/GameOverlay";
 import { trackGameStart, trackGameEnd } from "../lib/analytics";
+import { initAudio, playEatSound, playTimeExtensionSound, playDeathSound, playHighScoreSound } from "../utils/sound";
 
 const GRID_SIZE = 20;
 const CELL_SIZE = 30;
@@ -123,6 +124,9 @@ export default function TimeTrialSnake() {
   // Touch control handlers
   const handleTouchDirection = useCallback(
     (direction: Direction) => {
+      // Initialize audio on first touch interaction
+      initAudio();
+
       if (gameOver) return;
 
       const queue = directionQueueRef.current;
@@ -184,6 +188,9 @@ export default function TimeTrialSnake() {
   // Input handling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Initialize audio on first user interaction
+      initAudio();
+
       // Handle spacebar for pause/restart
       if (e.key === " ") {
         e.preventDefault();
@@ -350,6 +357,7 @@ export default function TimeTrialSnake() {
           )
         ) {
           setGameOver(true);
+          playDeathSound();
           return currentSnake;
         }
 
@@ -363,11 +371,13 @@ export default function TimeTrialSnake() {
         if (eatenEgg) {
           if (eatenEgg.type === "regular") {
             incrementScore(REGULAR_EGG_POINTS);
+            playEatSound();
           } else {
             // time-extension egg
             setTimeRemaining((prev) =>
               Math.min(prev + TIME_EXTENSION_AMOUNT, 99)
             );
+            playTimeExtensionSound();
           }
 
           // Remove eaten egg
@@ -396,6 +406,7 @@ export default function TimeTrialSnake() {
     ) {
       confettiShownRef.current = true;
       triggerHighScoreCelebration();
+      playHighScoreSound();
     }
   }, [isNewHighScore, highScore, gameOver]);
 

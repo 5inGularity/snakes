@@ -69,11 +69,13 @@ src/
 │   ├── GameContainer.tsx
 │   ├── GameHeader.tsx
 │   ├── GameOverlay.tsx
-│   └── TouchControls.tsx
+│   ├── TouchControls.tsx
+│   └── Joystick.tsx
 ├── games/              # Game implementations
 │   ├── ClassicSnake.tsx
 │   ├── AdderSnake.tsx
-│   └── TimeTrialSnake.tsx
+│   ├── TimeTrialSnake.tsx
+│   └── DoubleHelixSnake.tsx
 ├── hooks/              # Custom React hooks
 │   └── useHighScore.ts
 ├── lib/                # Utilities
@@ -83,16 +85,18 @@ src/
 │   ├── index.tsx       # Home page
 │   ├── classic.tsx
 │   ├── adder.tsx
-│   └── time-trial.tsx
+│   ├── time-trial.tsx
+│   └── double-helix.tsx
 └── utils/              # Helper functions
-    └── celebration.ts
+    ├── celebration.ts
+    └── sound.ts
 ```
 
 ## Features
 
 ### UI/UX
 - 📱 **Responsive Design**: Works seamlessly on mobile and desktop
-- 🎮 **Touch Controls**: On-screen d-pad for mobile gameplay
+- 🕹️ **Touch Controls**: Virtual joystick for mobile gameplay
 - ⌨️ **Keyboard Controls**: Arrow keys for movement, Space to pause
 - 🎨 **Tron Aesthetic**: Neon glow effects, scanlines, retro-futuristic design
 - 📏 **Fluid Typography**: Title scales with viewport on small screens
@@ -102,6 +106,7 @@ src/
 - 🎉 **Visual Feedback**: Confetti celebrations on high scores
 - 🥚 **Realistic Eggs**: Gradient-filled, egg-shaped (not flat ellipses)
 - 🎮 **Smooth Controls**: Input queue prevents lost commands
+- 🔊 **Retro Sound Effects**: Web Audio API for arcade-style beeps and tones
 
 ### Technical
 - 🌐 **Fast Loading**: Code splitting per game route
@@ -167,6 +172,12 @@ See [GAMES.md](GAMES.md) for detailed rules and strategies.
 - **Zero Overhead**: Analytics disabled when env vars not provided
 - **No Session Recording**: Respects user privacy
 - **Type Safety**: Custom `vite-env.d.ts` for environment variable types
+
+### Sound Effects
+- **Web Audio API**: Generate retro arcade sounds without audio files
+- **Zero File Size**: All sounds generated programmatically
+- **Low Latency**: Real-time synthesis, no loading delays
+- **Retro Style**: 8-bit style beeps and tones matching Tron aesthetic
 
 ## Development Learnings
 
@@ -282,3 +293,57 @@ useEffect(() => {
 - Always cleanup interval in return function
 - Respect pause and game over states
 - Process ONE input per tick (from queue)
+
+### Sound Effects Integration
+
+**When adding a new game, integrate sounds using the Web Audio API utility (`src/utils/sound.ts`):**
+
+```typescript
+// 1. Import sound functions
+import { initAudio, playEatSound, playDeathSound, playHighScoreSound } from '../utils/sound'
+
+// 2. Initialize audio on first user interaction
+useEffect(() => {
+  const handleKeyPress = (e: KeyboardEvent) => {
+    initAudio() // Must be called on user interaction (browser requirement)
+    // ... rest of handler
+  }
+  window.addEventListener('keydown', handleKeyPress)
+  return () => window.removeEventListener('keydown', handleKeyPress)
+}, [])
+
+// 3. Also initialize on touch controls
+const handleTouchDirection = useCallback((direction: Direction) => {
+  initAudio()
+  // ... rest of handler
+}, [])
+
+// 4. Play sounds at appropriate events
+if (eatenEgg) {
+  playEatSound() // When eating regular egg
+}
+
+if (gameOver) {
+  playDeathSound() // When snake dies
+}
+
+if (isNewHighScore && !confettiShownRef.current) {
+  playHighScoreSound() // When beating high score
+}
+```
+
+**Available Sound Functions:**
+- `playEatSound()` - Quick beep for regular eggs
+- `playGoldenEggSound()` - Two-tone for special eggs
+- `playTimeExtensionSound()` - Arpeggio for time bonuses
+- `playGrowSound()` - Rising pitch for growth
+- `playShrinkSound()` - Falling pitch for shrinking
+- `playDeathSound()` - Descending buzz for game over
+- `playHighScoreSound()` - Victory fanfare
+
+**Key Points:**
+- **Always call `initAudio()` on first user interaction** (keyboard, touch, or click)
+- Browsers block audio until user interacts with the page
+- Sounds are generated in real-time (no files needed)
+- All sounds are low volume (0.2-0.3) and short (40-200ms)
+- Add game-specific sounds by creating new functions in `sound.ts`
