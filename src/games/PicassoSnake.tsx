@@ -205,7 +205,6 @@ export default function PicassoSnake() {
   }, [currentPatternIndex, currentPattern, laidEggs])
 
   const {
-    score,
     highScore,
     showNewHighScore,
     setScore,
