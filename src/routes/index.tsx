@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { GiSnake, GiDna2 } from 'react-icons/gi'
 import { FaPlusMinus } from 'react-icons/fa6'
 import { IoTimer } from 'react-icons/io5'
+import { initAnalytics } from '../lib/analytics'
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -205,6 +206,7 @@ function HomePage() {
                   {game.available ? (
                     <Link
                       to={game.id}
+                      onClick={() => initAnalytics()}
                       className={`relative inline-flex items-center justify-center px-8 py-3 font-bold ${
                         game.accent === 'emerald' ? 'text-cyan-400 border-2 border-cyan-500' :
                         game.accent === 'purple' ? 'text-blue-400 border-2 border-blue-500' :

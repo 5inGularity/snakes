@@ -3,10 +3,6 @@ import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import './index.css'
-import { initAnalytics } from './lib/analytics'
-
-// Initialize analytics
-initAnalytics()
 
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {

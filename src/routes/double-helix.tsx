@@ -1,6 +1,8 @@
 import { createRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './__root'
-import DoubleHelixSnake from '../games/DoubleHelixSnake'
+import { lazy } from 'react'
+
+const DoubleHelixSnake = lazy(() => import('../games/DoubleHelixSnake'))
 
 function DoubleHelix() {
   return <DoubleHelixSnake hardcore />

@@ -1,6 +1,8 @@
 import { createRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './__root'
-import TimeTrialSnake from '../games/TimeTrialSnake'
+import { lazy } from 'react'
+
+const TimeTrialSnake = lazy(() => import('../games/TimeTrialSnake'))
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
