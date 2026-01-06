@@ -748,12 +748,21 @@ export default function TimeTrialSnake() {
     });
   }, [snake, eggs, gameOver]);
 
-  // Timer color based on remaining time
-  let timerColor = "text-white";
+  // Timer color and animation based on remaining time
+  let timerColorClass = "text-cyan-400";
+  let timerShadow = "0 0 10px #00FFFF";
+  let shouldPulse = false;
+
   if (timeRemaining <= 5) {
-    timerColor = "text-red-500 animate-pulse";
+    timerColorClass = "text-red-400";
+    timerShadow = "0 0 10px #ff0000, 0 0 20px #ff0000";
+    shouldPulse = true;
   } else if (timeRemaining <= 10) {
-    timerColor = "text-yellow-500";
+    timerColorClass = "text-orange-400";
+    timerShadow = "0 0 10px #ff9500";
+  } else if (timeRemaining <= 15) {
+    timerColorClass = "text-yellow-400";
+    timerShadow = "0 0 10px #ffff00";
   }
 
   return (
@@ -830,21 +839,10 @@ export default function TimeTrialSnake() {
         {/* Timer */}
         <div className="text-center mb-3 md:mb-4">
           <div
-            className={`text-3xl md:text-4xl font-bold uppercase tracking-wider ${
-              timerColor === "text-red-500"
-                ? "text-red-400"
-                : timerColor === "text-yellow-500"
-                ? "text-yellow-400"
-                : "text-cyan-400"
-            }`}
+            className={`text-3xl md:text-4xl font-bold uppercase tracking-wider ${timerColorClass} ${shouldPulse ? "animate-pulse" : ""}`}
             style={{
               fontFamily: "'Orbitron', sans-serif",
-              textShadow:
-                timerColor === "text-red-500"
-                  ? "0 0 10px #ff0000"
-                  : timerColor === "text-yellow-500"
-                  ? "0 0 10px #ffff00"
-                  : "0 0 10px #00FFFF",
+              textShadow: timerShadow,
             }}
           >
             {timeRemaining}s
