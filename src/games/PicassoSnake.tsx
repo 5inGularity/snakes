@@ -14,7 +14,7 @@ const INITIAL_SNAKE = [{ x: 10, y: 10 }, { x: 9, y: 10 }]
 const INITIAL_DIRECTION = { x: 1, y: 0 }
 const INITIAL_SPEED = 150
 const GROWTH_INTERVAL = 30000 // 30 seconds
-const SPEED_INCREASE = 0.1 // 10% increase
+const SPEED_INCREASE = 0.2 // 20% of original speed per interval
 const MAX_SPEED_MULTIPLIER = 4 // 400% of original
 
 type Position = { x: number; y: number }
@@ -395,8 +395,8 @@ export default function PicassoSnake() {
           return [...currentSnake, tail]
         })
 
-        // Increase speed (cap at 400%)
-        setSpeedMultiplier(prev => Math.min(prev * (1 + SPEED_INCREASE), MAX_SPEED_MULTIPLIER))
+        // Increase speed by 20% of original (linear growth, not compound)
+        setSpeedMultiplier(prev => Math.min(prev + SPEED_INCREASE, MAX_SPEED_MULTIPLIER))
       }
 
       // Process next direction from queue
