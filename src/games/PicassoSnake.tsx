@@ -767,11 +767,34 @@ export default function PicassoSnake() {
   const currentScore = calculateScore()
   const currentPatternPercentage = currentScore % 100
 
+  // Check if device has touch support
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
+  // Handle completion screen continue
+  const handleContinue = useCallback(() => {
+    if (currentPatternIndex < PATTERNS.length - 1) {
+      setCurrentPatternIndex(prev => prev + 1)
+      setLaidEggs(new Set())
+      setSnake(INITIAL_SNAKE)
+      directionRef.current = INITIAL_DIRECTION
+      setSpeedMultiplier(1)
+      setTimeUntilGrowth(GROWTH_INTERVAL / 1000)
+      growthTimerRef.current = 0
+      setShowCompletion(false)
+    } else {
+      // Completed all patterns
+      resetGame()
+    }
+  }, [currentPatternIndex, resetGame])
+
   return (
     <>
       {/* Completion Screen */}
       {showCompletion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
+          onClick={handleContinue}
+        >
           <div className="relative max-w-md mx-4">
             <div className="absolute -inset-1 bg-purple-400 opacity-30 blur-lg"></div>
             <div
@@ -813,8 +836,8 @@ export default function PicassoSnake() {
                     style={{ fontFamily: "'Orbitron', sans-serif" }}
                   >
                     {currentPatternIndex === PATTERNS.length - 1
-                      ? '[ Press Space to Start Over ]'
-                      : '[ Press Space to Continue ]'}
+                      ? isTouchDevice ? '[ Tap to Start Over ]' : '[ Press Space to Start Over ]'
+                      : isTouchDevice ? '[ Tap to Continue ]' : '[ Press Space to Continue ]'}
                   </div>
                 </div>
               </div>
