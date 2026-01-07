@@ -3,7 +3,7 @@
   "short_name": "Snake//Arcade",
   "description": "Retro snake game variants with Tron-inspired neon aesthetic",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#000000",
   "theme_color": "#00FFFF",
   "orientation": "portrait",
